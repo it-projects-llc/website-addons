@@ -5,15 +5,26 @@ from odoo.exceptions import AccessError
 from odoo.fields import Date
 from odoo.http import request
 
-from odoo.addons.website.models.website import slug
+from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.website_event.controllers.main import WebsiteEventController
-from odoo.addons.website_portal.controllers.main import website_account
+from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.base.models.ir_ui_view import keep_query
 
 _logger = logging.getLogger(__name__)
 
 
-class PortalEvent(website_account):
+class PortalEvent(CustomerPortal):
+    def _prepare_home_portal_values(self, counters):
+        values = super(PortalEvent, self)._prepare_home_portal_values(counters)
+        if 'tickets_count' in counters:
+            partner = request.env.user.partner_id
+            values['tickets_count'] = request.env["event.registration"].search_count([
+                ("attendee_partner_id", "=", partner.id),
+                ("state", "=", "open"),
+            ])
+        return values
+
     def _get_archive_groups(
         self,
         model,
@@ -54,11 +65,11 @@ class PortalEvent(website_account):
             ("state", "=", "open"),
         ]
 
+
     @http.route()
     def account(self, **kw):
         """ Add sales documents to main account page """
         response = super(PortalEvent, self).account(**kw)
-
         domain = self._tickets_domain()
         tickets_count = request.env["event.registration"].search_count(domain)
 
@@ -97,10 +108,10 @@ class PortalEvent(website_account):
         tickets = Registration.search(
             domain, limit=self._items_per_page, offset=pager["offset"]
         )
-
         values.update(
             {
                 "date": date_begin,
+                'page_name': 'tickets',
                 "tickets": tickets,
                 "pager": pager,
                 "archive_groups": archive_groups,
@@ -155,8 +166,10 @@ class PortalEvent(website_account):
             return request.render("website.403")
 
         ticket_sudo = ticket.sudo()
-
-        values.update({"ticket": ticket_sudo})
+        values.update({
+            'page_name': 'tickets',
+            "ticket": ticket_sudo
+            }) 
         return request.render("portal_event_tickets.portal_ticket_page", values)
 
     @http.route(

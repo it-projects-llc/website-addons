@@ -18,7 +18,7 @@ class SaleOrderLine(models.Model):
                 ("event_id", "=", self.event_id.id),
             ]
         )
-        tickets.button_reg_cancel()
+        tickets.action_cancel()
 
         for t in tickets:
             # post a message why it was canceled

@@ -22,24 +22,25 @@ class EventMailScheduler(models.Model):
         selection_add=[
             ("transferring_started", "Transferring started"),
             ("transferring_finished", "Transferring finished"),
-        ]
-    )
-
+        ], ondelete={
+        "transferring_started": "cascade",
+        "transferring_finished": "cascade",
+    })
     @api.depends(
-        "event_id.state",
-        "event_id.date_begin",
+        "event_id.registration_ids.state",
+        "event_id.date_begin", 
         "interval_type",
         "interval_unit",
         "interval_nbr",
     )
     def _compute_scheduled_date(self):
         for rself in self:
-            if rself.interval_type not in [
+            if rself.interval_type not in [ 
                 "transferring_started",
                 "transferring_finished",
             ]:
                 return super(EventMailScheduler, rself)._compute_scheduled_date()
-
+            
             if rself.event_id.state not in ["confirm", "done"]:
                 rself.scheduled_date = False
             else:
@@ -77,7 +78,6 @@ class EventMailScheduler(models.Model):
 class EventMailRegistration(models.Model):
     _inherit = "event.mail.registration"
 
-    @api.one
     @api.depends(
         "registration_id", "scheduler_id.interval_unit", "scheduler_id.interval_type"
     )

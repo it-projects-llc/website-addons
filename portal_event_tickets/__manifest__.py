@@ -4,7 +4,7 @@
     "category": "Marketing",
     # "live_test_url": "http://apps.it-projects.info/shop/product/portal-event-tickets?version=10.0",
     "images": ["images/banner.jpg"],
-    "version": "13.0.1.1.1",
+    "version": "14.0.1.0.0",
     "application": False,
     "author": "IT-Projects LLC, Ivan Yelizariev",
     "support": "apps@itpp.dev",
@@ -14,7 +14,7 @@
     "currency": "EUR",
     "depends": [
         "event_sale",
-        "website_portal",
+        "portal",
         "partner_event",
         "website_event_attendee_fields",
         "website_sale_refund",
@@ -33,7 +33,7 @@
     "post_init_hook": None,
     "uninstall_hook": None,
     "auto_install": False,
-    "installable": False,
+    "installable": True,
     "demo_title": "Event extensions",
     "demo_addons": [
         "website_event_attendee_fields",

@@ -38,7 +38,7 @@
     "demo_addons": [
         "website_event_attendee_fields",
         "website_event_attendee_signup",
-        "website_event_require_login",
+        "website_event_require_login_itpp",
     ],
     "demo_addons_hidden": ["website_event_attendee_fields_custom"],
     "demo_url": "portal-event-tickets",

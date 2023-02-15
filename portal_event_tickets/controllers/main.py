@@ -182,9 +182,9 @@ class PortalEvent(CustomerPortal):
             return request.render("website.403")
 
         pdf = (
-            request.env["report"]
+            request.env.ref("event.report_event_registration_badge")
             .sudo()
-            .get_pdf([ticket.id], "event.event_registration_report_template_badge")
+            ._render_qweb_pdf([ticket.id])[0]
         )
         pdfhttpheaders = [
             ("Content-Type", "application/pdf"),

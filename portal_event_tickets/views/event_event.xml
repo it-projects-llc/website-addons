@@ -5,7 +5,7 @@
         <field name="model">event.event</field>
         <field name="inherit_id" ref="partner_event.view_event_form_partner" />
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='seats_max']" position="after">
+            <xpath expr="//field[@name='auto_confirm']" position="before">
                 <field name="ticket_transferring" />
                 <field name="ticket_changing" />
             </xpath>

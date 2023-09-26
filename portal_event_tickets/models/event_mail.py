@@ -55,7 +55,9 @@ class EventMailScheduler(models.Model):
                 "transferring_started",
                 "transferring_finished",
             ]:
-                return super(EventMailScheduler, rself).execute()
+                super(EventMailScheduler, rself).execute()
+                continue
+
             if registration:
                 rself.write(
                     {

@@ -22,7 +22,7 @@ Additional features:
 
   * New attendee receives email with a link to finish ticket transferring
 
-* Tracks changes in key registration fields (via ``track_visibility='onchange'``)
+* Tracks changes in key registration fields (via ``tracking=True``)
 
 * Tickets can be changed to other products (including other tickets)
 

@@ -18,7 +18,7 @@ class EventRegistration(models.Model):
         compute="_compute_origin_registration",
         store=True,
         string="Original Ticket",
-        track_visibility="onchange",
+        tracking=True,
     )
     was_updated = fields.Boolean(
         "Ticket was updated",
@@ -28,14 +28,14 @@ class EventRegistration(models.Model):
     )
 
     # Updated fields
-    email = fields.Char(track_visibility="onchange")
-    phone = fields.Char(track_visibility="onchange")
-    name = fields.Char(track_visibility="onchange")
+    email = fields.Char(tracking=True)
+    phone = fields.Char(tracking=True)
+    name = fields.Char(tracking=True)
 
-    attendee_partner_id = fields.Many2one(track_visibility="onchange")
-    partner_id = fields.Many2one(track_visibility="onchange")
-    event_id = fields.Many2one(track_visibility="onchange")
-    event_ticket_id = fields.Many2one(track_visibility="onchange")
+    attendee_partner_id = fields.Many2one(tracking=True)
+    partner_id = fields.Many2one(tracking=True)
+    event_id = fields.Many2one(tracking=True)
+    event_ticket_id = fields.Many2one(tracking=True)
 
     @api.depends("sale_order_id", "sale_order_id.order_line")
     def _compute_origin_registration(self):

@@ -177,15 +177,22 @@ class PortalEvent(CustomerPortal):
     )
     def portal_get_ticket(self, ticket_id=None, **kw):
         ticket = request.env["event.registration"].browse(ticket_id)
+        report_template_for_portal = ticket.sudo().event_id.report_template_for_portal
 
         if not self._has_ticket_access(ticket):
             return request.render("website.403")
 
+        # if report_template_for_portal:
+        registration_badge_template = report_template_for_portal.get_metadata()[0].get('xmlid') \
+            if report_template_for_portal else "event.report_event_registration_badge"
+
         pdf = (
-            request.env.ref("event.report_event_registration_badge")
-            .sudo()
-            ._render_qweb_pdf([ticket.id])[0]
-        )
+            # request.env.ref("event.report_event_registration_badge")
+            request.env.ref(registration_badge_template)
+                .sudo()
+                ._render_qweb_pdf([ticket.id])[0]
+            )
+
         pdfhttpheaders = [
             ("Content-Type", "application/pdf"),
             ("Content-Length", len(pdf)),

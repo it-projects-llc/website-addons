@@ -28,19 +28,20 @@ class EventMailScheduler(models.Model):
     })
     @api.depends(
         "event_id.registration_ids.state",
-        "event_id.date_begin", 
+        "event_id.date_begin",
         "interval_type",
         "interval_unit",
         "interval_nbr",
     )
     def _compute_scheduled_date(self):
         for rself in self:
-            if rself.interval_type not in [ 
+            if rself.interval_type not in [
                 "transferring_started",
                 "transferring_finished",
             ]:
-                return super(EventMailScheduler, rself)._compute_scheduled_date()
-            
+                super(EventMailScheduler, rself)._compute_scheduled_date()
+                continue
+
             if rself.event_id.state not in ["confirm", "done"]:
                 rself.scheduled_date = False
             else:
@@ -91,7 +92,8 @@ class EventMailRegistration(models.Model):
                 "transferring_started",
                 "transferring_finished",
             ]:
-                return super(EventMailRegistration, rself)._compute_scheduled_date()
+                super(EventMailRegistration, rself)._compute_scheduled_date()
+                continue
 
             if rself.registration_id:
                 # date_open is not corresponded to its meaining,
@@ -100,3 +102,5 @@ class EventMailRegistration(models.Model):
                 rself.scheduled_date = date_open_datetime + _INTERVALS[
                     rself.scheduler_id.interval_unit
                 ](rself.scheduler_id.interval_nbr)
+            else:
+                rself.scheduled_date = False

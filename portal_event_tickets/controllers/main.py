@@ -67,9 +67,9 @@ class PortalEvent(CustomerPortal):
 
 
     @http.route()
-    def account(self, **kw):
+    def account(self, *args, **kw):
         """ Add sales documents to main account page """
-        response = super(PortalEvent, self).account(**kw)
+        response = super(PortalEvent, self).account(*args, **kw)
         domain = self._tickets_domain()
         tickets_count = request.env["event.registration"].search_count(domain)
 
@@ -169,7 +169,7 @@ class PortalEvent(CustomerPortal):
         values.update({
             'page_name': 'tickets',
             "ticket": ticket_sudo
-            }) 
+            })
         return request.render("portal_event_tickets.portal_ticket_page", values)
 
     @http.route(

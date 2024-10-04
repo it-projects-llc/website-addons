@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <function model="event.event" name="write">
+        <value model="event.event" eval="obj().search([]).ids" />
+        <value
+            eval="{
+        'create_partner': True,
+        'attendee_field_ids': [(6, 0, [
+            ref('website_event_attendee_fields.attendee_field_name'),
+            ref('website_event_attendee_fields.attendee_field_email'),
+            ref('website_event_attendee_fields.attendee_field_phone'),
+            ref('website_event_attendee_fields.attendee_field_country_id'),
+            ref('website_event_attendee_fields.attendee_field_function'),
+        ])]}"
+        />
+    </function>
+</odoo>

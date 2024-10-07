@@ -3,7 +3,7 @@
     "summary": "Attendees can use portal dashboard to make extra purchases for the event, for example.",  # noqa: E501
     "category": "Marketing",
     "images": ["images/banner.jpg"],
-    "version": "14.0.1.0.0",
+    "version": "17.0.1.0.0",
     "author": "IT-Projects LLC",
     "support": "it@it-projects.info",
     "website": "https://github.com/it-projects-llc/website-addons",

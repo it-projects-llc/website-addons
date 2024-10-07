@@ -6,7 +6,7 @@ class EventRegistration(models.Model):
 
     @api.model
     def create(self, vals):
-        res = super(EventRegistration, self).create(vals)
+        res = super().create(vals)
 
         if res.event_id.attendee_signup and res.attendee_partner_id:
             login = res.attendee_partner_id.email

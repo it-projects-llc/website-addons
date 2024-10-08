@@ -1,0 +1,354 @@
+<?xml version="1.0" ?>
+<odoo>
+    <template
+        id="my_portal_layout"
+        name="Portal layout : margin"
+        inherit_id="portal.portal_layout"
+        priority="25"
+    >
+        <xpath expr="//div[hasclass('o_portal')]" position="attributes">
+            <attribute name="class">o_portal container mt-3 mb-2</attribute>
+        </xpath>
+    </template>
+    <template
+        id="portal_my_home_menu_event"
+        name="Portal layout : event menu entries"
+        inherit_id="portal.portal_breadcrumbs"
+        priority="25"
+    >
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li
+                t-if="page_name == 'tickets'"
+                t-attf-class="breadcrumb-item #{'active' if not tickets else ''}"
+            >
+                <t t-if="ticket">
+                    <a
+                        t-if="ticket"
+                        t-attf-href="/my/tickets?{{ keep_query() }}"
+                    >Tickets </a> / Ticket #<span t-esc="ticket.id" />
+                </t>
+                <t t-else="">
+                    Tickets
+                </t>
+            </li>
+        </xpath>
+    </template>
+    <template
+        id="portal_my_home_event"
+        name="Portal My Home : event entries"
+        inherit_id="portal.portal_my_home"
+        priority="25"
+    >
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Tickets</t>
+                <t t-set="url" t-value="'/my/tickets'" />
+                <t t-set="placeholder_count" t-value="'tickets_count'" />
+            </t>
+        </xpath>
+    </template>
+    <template id="portal_my_tickets" name="My Tickets">
+        <t t-call="portal.portal_layout">
+
+            <t t-if="not tickets">
+                <p>There are currently no invoices and payments for your account.</p>
+            </t>
+
+            <t t-if="tickets" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Ticket ID</th>
+                        <th>Event</th>
+                        <th>Ticket Type</th>
+                    </tr>
+                </thead>
+                <t t-foreach="tickets" t-as="ticket">
+                    <tr>
+                        <td>
+                            <a
+                                class="ticket-id"
+                                t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}"
+                            >#<t t-esc="ticket.id" /></a>
+                        </td>
+                        <td>
+                            <a t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}">
+                                <t t-esc="ticket.event_id.display_name" />
+                            </a>
+                        </td>
+                        <td>
+                            <span t-field="ticket.event_ticket_id.display_name" />
+                        </td>
+                    </tr>
+                </t>
+
+                <div t-if="pager" class="o_portal_pager text-center">
+                    <t t-call="website.pager" />
+                </div>
+            </t>
+        </t>
+    </template>
+    <template
+        id="portal_ticket_page"
+        name="Ticket"
+        inherit_id="portal.portal_sidebar"
+        primary="True"
+    >
+        <xpath expr="//div[hasclass('o_portal_sidebar')]" position="inside">
+            <div class="row mt16 o_portal_sale_sidebar">
+                <!-- Sidebar -->
+                <t t-call="portal.portal_record_sidebar">
+                    <t t-set="classes" t-value="'col-lg-auto d-print-none'" />
+
+                    <t t-set="title">
+                        <h2 class="mb-0"><b>Ticket #<span t-esc="ticket.id" /></b></h2>
+                    </t>
+                    <t t-set="entries">
+                        <ul
+                            class="list-group list-group-flush flex-wrap flex-row flex-lg-column"
+                        >
+                            <li class="list-group-item flex-grow-1">
+                                <a
+                                    t-if="ticket.event_id.ticket_transferring"
+                                    role="button"
+                                    class="btn btn-primary btn-block mb8"
+                                    data-toggle="modal"
+                                    data-target="#transferTicketModal"
+                                    href="#"
+                                >
+                                    <i class="fa fa-exchange" />
+                                    Transfer to another person
+                                </a>
+                                <a
+                                    t-if="ticket.event_id.ticket_transferring"
+                                    role="button"
+                                    data-toggle="modal"
+                                    data-target="#changeTicketModal"
+                                    href="#"
+                                    class="btn btn-primary btn-block mb8"
+                                >
+                                    <i class="fa fa-wrench" />
+                                    Upgrade / Change ticket
+                                </a>
+                                <a
+                                    t-attf-href="/my/tickets/pdf/#{ticket.id}"
+                                    class="btn btn-secondary btn-block mb8"
+                                >
+                                <i class="fa fa-print" />
+                                    Print
+                                </a>
+                            </li>
+                        </ul>
+                    </t>
+                </t>
+                <div id="ticket_content" class="col-12 col-lg justify-content-end">
+                    <div id="introduction" class="pb-2 pt-3 card-header bg-white">
+                        <h2 class="my-0">
+                            <t t-esc="ticket.event_id.display_name" />
+                            #<em t-esc="ticket.id" />
+                        </h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb8">
+                            <strong>Event:</strong>
+                            <a t-attf-href="/event/#{ticket.event_id.id}">
+                                <t t-esc="ticket.event_id.display_name" />
+                            </a>
+                        </div>
+                        <div class="mb8">
+                            <strong>Ticket Type:</strong>
+                            <span t-field="ticket.event_ticket_id.display_name" />
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="modal fade"
+                    id="transferTicketModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="myModalLabel"
+                >
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form t-attf-action="/my/tickets/transfer" method="post">
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    t-att-value="request.csrf_token()"
+                                />
+                                <input
+                                    type="hidden"
+                                    name="ticket_id"
+                                    t-att-value="ticket.id"
+                                />
+                                <div class="modal-header">
+                                    <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        <span aria-hidden="true">&amp;times;</span>
+                                    </button>
+                                    <h4
+                                        class="modal-title"
+                                        id="myModalLabel"
+                                    >Ticket transferring</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label
+                                            for="transfer_email"
+                                        >Receiver's Email</label>
+                                        <input
+                                            type="email"
+                                            class="form-control"
+                                            name="to_email"
+                                            placeholder="Email"
+                                        />
+                                    </div>
+                                    <div class="alert alert-danger" role="alert"><b
+                                        >Warning!</b> Once confirmed this action cannot be undone</div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button
+                                        type="button"
+                                        class="btn btn-default"
+                                        data-dismiss="modal"
+                                    >Close</button>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >Confirm</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="modal fade"
+                    id="changeTicketModal"
+                    tabindex="-1"
+                    role="dialog"
+                    aria-labelledby="myModalLabel"
+                >
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <form t-attf-action="/my/tickets/change" method="post">
+                                <input
+                                    type="hidden"
+                                    name="csrf_token"
+                                    t-att-value="request.csrf_token()"
+                                />
+                                <input
+                                    type="hidden"
+                                    name="ticket_id"
+                                    t-att-value="ticket.id"
+                                />
+                                <div class="modal-header">
+                                    <button
+                                        type="button"
+                                        class="close"
+                                        data-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                        <span aria-hidden="true">&amp;times;</span>
+                                    </button>
+                                    <h4
+                                        class="modal-title"
+                                        id="myModalLabel"
+                                    >Upgrade / change ticket</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p
+                                    >This ticket can be changed to other tickets or products. Click <em
+                                        >continue</em>, register new ticket (or fill the cart by other tickets\products) and follow usual checkout process.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button
+                                        type="button"
+                                        class="btn btn-default"
+                                        data-dismiss="modal"
+                                    >Close</button>
+                                    <button
+                                        type="submit"
+                                        class="btn btn-primary"
+                                    >Continue</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+    <template id="portal_ticket_transfer" name="Ticket">
+        <t t-call="portal.portal_layout">
+            <div id="wrap">
+                <div class="container">
+                    <div
+                        t-if="editor_mode"
+                        class="alert alert-warning css_editable_mode_hidden"
+                        t-ignore="True"
+                    >
+                        <p>Use one of following link to see page in a mode you need.</p>
+                        <ul>
+                            <li>
+                                <a href="?error=">Transfered succefully</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="?error=receiver_not_found"
+                                >there is no partner with that email</a>
+                            </li>
+                            <li>
+                                <a
+                                    href="?error=receiver_has_ticket"
+                                >Partner already has ticket</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div
+                        t-if="not error"
+                        t-field="website.ticket_transfer_success"
+                        class="oe_structure mt16"
+                    />
+                    <div
+                        t-if="error == 'receiver_not_found'"
+                        t-field="website.ticket_transfer_receiver_not_found"
+                        class="oe_structure mt16"
+                    />
+                    <div
+                        t-if="error == 'receiver_has_ticket'"
+                        t-field="website.ticket_transfer_receiver_has_ticket"
+                        class="oe_structure mt16"
+                    />
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="portal_ticket_transfer_receive" name="Ticket">
+        <t t-call="website.layout">
+            <t t-set="autofill_user" t-value="env.user" />
+            <div id="transfer_ticket" t-att-data-event-name="event.name">
+                <t t-call="website_event.registration_attendee_details">
+                    <input
+                        name="transfer_ticket"
+                        t-att-value="transfer_ticket.id"
+                        type="hidden"
+                    />
+                </t>
+            </div>
+        </t>
+    </template>
+    <template id="message_origin_link">
+        <p>This ticket has been canceled from:
+        <t t-foreach="origin" t-as="o">
+                <a href="#" t-att-data-oe-model="o._name" t-att-data-oe-id="o.id">
+                    <t t-esc="o.name" />
+                </a>
+                <span t-if="origin.ids[-1:] != o.ids">, </span>
+            </t>
+        </p>
+    </template>
+</odoo>

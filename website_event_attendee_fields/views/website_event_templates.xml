@@ -121,7 +121,7 @@
 
             if (odoo.registration_form_init) {
                 initEventForm();
-            } else {
+            } else if (odoo &amp;&amp; odoo.define) {
                 odoo.define('website_event_attendee_fields.registration_attendee_details', function(require){
                     require('website_event_attendee_fields.registration_form');
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="registration_template"
+        inherit_id="website_event.registration_template"
+        priority="100"
+    >
+        <!-- due to odoo framework restrictions we cannot add attribute depending on condition.
+         Workaround: add attribute and remove it by JS when page is loaded -->
+        <xpath expr="//select" position="attributes">
+            <attribute name="disabled">1</attribute>
+        </xpath>
+        <xpath expr="//select[@class='w-auto custom-select']" position="attributes">
+            <attribute name="disabled">1</attribute>
+        </xpath>
+        <xpath expr="//form" position="before">
+            <t
+                t-set="is_user_public"
+                t-value="website.env.user == request.website.user_id"
+            />
+        </xpath>
+        <xpath expr="//form" position="after">
+            <t t-if="not is_user_public">
+                <script type="text/javascript">
+                    let elements = document.querySelectorAll('.custom-select');
+                    Array.prototype.forEach.call(elements, function(el, i){
+                        el.removeAttribute('disabled')
+                    });
+                </script>
+            </t>
+        </xpath>
+        <xpath expr="//button[@type='submit']" position="replace">
+            <t t-if="is_user_public">
+                <a
+                    t-attf-href="/web/login?redirect=#{quote_plus(request.httprequest.full_path)}"
+                    class="btn btn-primary btn-lg pull-right"
+                >Sign in (Sign up) to proceed</a>
+            </t>
+            <t t-else="">$0</t>
+        </xpath>
+        <xpath
+            expr="//div[@class='o_wevent_registration_single']/div/div/button[@type='submit']"
+            position="replace"
+        >
+            <t t-if="is_user_public">
+                <a
+                    t-attf-href="/web/login?redirect=#{quote_plus(request.httprequest.full_path)}"
+                    class="btn btn-primary btn-lg pull-right"
+                >Sign in (Sign up) to proceed</a>
+            </t>
+            <t t-else="">$0</t>
+        </xpath>
+    </template>
+</odoo>

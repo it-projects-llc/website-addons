@@ -51,6 +51,7 @@ class EventMailScheduler(models.Model):
                 rself.scheduled_date = datetime.strptime(
                     date, tools.DEFAULT_SERVER_DATETIME_FORMAT
                 ) + _INTERVALS[rself.interval_unit](sign * rself.interval_nbr)
+        return True
 
     def execute(self, registration=None):
         for rself in self:
@@ -104,3 +105,4 @@ class EventMailRegistration(models.Model):
                 ](rself.scheduler_id.interval_nbr)
             else:
                 rself.scheduled_date = False
+        return True

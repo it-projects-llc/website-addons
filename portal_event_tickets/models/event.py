@@ -35,4 +35,4 @@ class Event(models.Model):
                     # False means no errors
                     return False
 
-        return super(Event, self).check_partner_for_new_ticket(partner_id)
+        return super().check_partner_for_new_ticket(partner_id)

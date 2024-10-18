@@ -9,7 +9,7 @@ class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
     def _cancel_line(self, origin=None):
-        res = super(SaleOrderLine, self)._cancel_line(origin=origin)
+        res = super()._cancel_line(origin=origin)
 
         tickets = self.env["event.registration"].search(
             [

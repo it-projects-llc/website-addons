@@ -6,7 +6,7 @@ from odoo.tests.common import HttpCase
 
 class TourCase(HttpCase):
     def setUp(self):
-        super(TourCase, self).setUp()
+        super().setUp()
 
         # create Event
         self.event = self.env["event.event"].create(

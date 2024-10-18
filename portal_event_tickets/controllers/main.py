@@ -16,7 +16,7 @@ _logger = logging.getLogger(__name__)
 
 class PortalEvent(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
-        values = super(PortalEvent, self)._prepare_home_portal_values(counters)
+        values = super()._prepare_home_portal_values(counters)
         if "tickets_count" in counters:
             domain = self._tickets_domain()
             values["tickets_count"] = (
@@ -34,7 +34,7 @@ class PortalEvent(CustomerPortal):
     @http.route()
     def account(self, *args, **kw):
         """Add sales documents to main account page"""
-        response = super(PortalEvent, self).account(*args, **kw)
+        response = super().account(*args, **kw)
         domain = self._tickets_domain()
         tickets_count = request.env["event.registration"].search_count(domain)
 
@@ -332,7 +332,7 @@ class PortalEvent(CustomerPortal):
 class WebsiteSaleExtended(WebsiteSale):
     @http.route()
     def cart(self, **post):
-        response = super(WebsiteSaleExtended, self).cart(**post)
+        response = super().cart(**post)
         if post.get("total_is_negative"):
             response.qcontext.update(
                 {

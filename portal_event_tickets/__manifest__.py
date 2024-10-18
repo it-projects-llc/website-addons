@@ -3,7 +3,7 @@
     "summary": """Allows to customers see their tickets for events at the Portal""",
     "category": "Marketing",
     "images": ["images/banner.jpg"],
-    "version": "14.0.1.0.0",
+    "version": "17.0.1.0.0",
     "author": "IT-Projects LLC",
     "support": "apps@it-projects.info",
     "website": "https://github.com/it-projects-llc/website-addons",

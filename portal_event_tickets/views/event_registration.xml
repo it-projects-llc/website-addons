@@ -12,8 +12,9 @@
             </xpath>
             <xpath expr="//sheet/*[1]" position="before">
                 <!-- put it before first element in the form -->
+                <field name="is_transferring" invisible="1" />
                 <p
-                    attrs="{'invisible': [('is_transferring', '=', False)]}"
+                    invisible="is_transferring == False"
                     style="color: red"
                 >Ticket transferring was started, but haven't finished!</p>
             </xpath>

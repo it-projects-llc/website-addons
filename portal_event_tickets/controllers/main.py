@@ -145,13 +145,13 @@ class PortalEvent(CustomerPortal):
         registration_badge_template = (
             report_template_for_portal.get_metadata()[0].get("xmlid")
             if report_template_for_portal
-            else "event.report_event_registration_badge"
+            else "event.action_report_event_registration_badge"
         )
 
         pdf = (
-            request.env.ref(registration_badge_template)
+            request.env["ir.actions.report"]
             .with_user(SUPERUSER_ID)
-            ._render_qweb_pdf([ticket.id])[0]
+            ._render_qweb_pdf(registration_badge_template, [ticket.id])[0]
         )
 
         pdfhttpheaders = [
@@ -277,12 +277,20 @@ class PortalEvent(CustomerPortal):
             tickets = WebsiteEventController()._process_tickets_form(
                 ticket.event_id, {f"nb_register-{ticket.event_ticket_id.id or 0}": 1}
             )
+            default_first_attendee = {}
+            if ticket.attendee_partner_id:
+                default_first_attendee = {
+                    "name": ticket.attendee_partner_id.name,
+                    "phone": ticket.attendee_partner_id.phone,
+                    "email": ticket.attendee_partner_id.email,
+                }
             values.update(
                 {
                     "transfer_ticket": ticket,
                     "tickets": tickets,
                     "event": ticket.event_id,
                     "availability_check": True,
+                    "default_first_attendee": default_first_attendee,
                 }
             )
             return request.render(
@@ -297,7 +305,6 @@ class PortalEvent(CustomerPortal):
         )[0]
         registration["event_id"] = ticket.event_id.id
         partner_vals = request.env["event.registration"]._prepare_partner(registration)
-        assert not partner_vals.get("email")
 
         receiver.sudo().write(partner_vals)
 

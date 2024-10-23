@@ -25,7 +25,10 @@
                     <a
                         t-if="ticket"
                         t-attf-href="/my/tickets?{{ keep_query() }}"
-                    >Tickets </a> / Ticket #<span t-esc="ticket.id" />
+                    >Tickets
+                    </a>
+                    / Ticket #
+                    <span t-esc="ticket.id" />
                 </t>
                 <t t-else="">
                     Tickets
@@ -39,10 +42,15 @@
         inherit_id="portal.portal_my_home"
         priority="25"
     >
-        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+        <xpath expr="//div[@id='portal_client_category']" position="inside">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tickets</t>
                 <t t-set="url" t-value="'/my/tickets'" />
+                <t t-set="text">View your tickets</t>
+                <t
+                    t-set="icon"
+                    t-value="'/portal/static/src/img/portal-connection.svg'"
+                />
                 <t t-set="placeholder_count" t-value="'tickets_count'" />
             </t>
         </xpath>
@@ -68,7 +76,9 @@
                             <a
                                 class="ticket-id"
                                 t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}"
-                            >#<t t-esc="ticket.id" /></a>
+                            >#
+                                <t t-esc="ticket.id" />
+                            </a>
                         </td>
                         <td>
                             <a t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}">
@@ -100,7 +110,11 @@
                     <t t-set="classes" t-value="'col-lg-auto d-print-none'" />
 
                     <t t-set="title">
-                        <h2 class="mb-0"><b>Ticket #<span t-esc="ticket.id" /></b></h2>
+                        <h2 class="mb-0">
+                            <b>Ticket #
+                                <span t-esc="ticket.id" />
+                            </b>
+                        </h2>
                     </t>
                     <t t-set="entries">
                         <ul
@@ -110,9 +124,9 @@
                                 <a
                                     t-if="ticket.event_id.ticket_transferring"
                                     role="button"
-                                    class="btn btn-primary btn-block mb8"
-                                    data-toggle="modal"
-                                    data-target="#transferTicketModal"
+                                    class="btn btn-primary d-block btn-block mb8"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#transferTicketModal"
                                     href="#"
                                 >
                                     <i class="fa fa-exchange" />
@@ -121,19 +135,19 @@
                                 <a
                                     t-if="ticket.event_id.ticket_transferring"
                                     role="button"
-                                    data-toggle="modal"
-                                    data-target="#changeTicketModal"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#changeTicketModal"
                                     href="#"
-                                    class="btn btn-primary btn-block mb8"
+                                    class="btn btn-primary d-block btn-block mb8"
                                 >
                                     <i class="fa fa-wrench" />
                                     Upgrade / Change ticket
                                 </a>
                                 <a
                                     t-attf-href="/my/tickets/pdf/#{ticket.id}"
-                                    class="btn btn-secondary btn-block mb8"
+                                    class="btn btn-secondary d-block btn-block mb8"
                                 >
-                                <i class="fa fa-print" />
+                                    <i class="fa fa-print" />
                                     Print
                                 </a>
                             </li>
@@ -144,7 +158,8 @@
                     <div id="introduction" class="pb-2 pt-3 card-header bg-white">
                         <h2 class="my-0">
                             <t t-esc="ticket.event_id.display_name" />
-                            #<em t-esc="ticket.id" />
+                            #
+                            <em t-esc="ticket.id" />
                         </h2>
                     </div>
                     <div class="card-body">
@@ -164,7 +179,7 @@
                     class="modal fade"
                     id="transferTicketModal"
                     tabindex="-1"
-                    role="dialog"
+                    role="modal"
                     aria-labelledby="myModalLabel"
                 >
                     <div class="modal-dialog" role="document">
@@ -181,24 +196,23 @@
                                     t-att-value="ticket.id"
                                 />
                                 <div class="modal-header">
-                                    <button
-                                        type="button"
-                                        class="close"
-                                        data-dismiss="modal"
-                                        aria-label="Close"
-                                    >
-                                        <span aria-hidden="true">&amp;times;</span>
-                                    </button>
                                     <h4
                                         class="modal-title"
                                         id="myModalLabel"
-                                    >Ticket transferring</h4>
+                                    >Ticket transferring
+                                    </h4>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                    </button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="form-group">
-                                        <label
-                                            for="transfer_email"
-                                        >Receiver's Email</label>
+                                        <label for="transfer_email">Receiver's Email
+                                        </label>
                                         <input
                                             type="email"
                                             class="form-control"
@@ -206,19 +220,24 @@
                                             placeholder="Email"
                                         />
                                     </div>
-                                    <div class="alert alert-danger" role="alert"><b
-                                        >Warning!</b> Once confirmed this action cannot be undone</div>
+                                    <div class="alert alert-danger" role="alert">
+                                        <b>Warning!
+                                        </b>
+                                        Once confirmed this action cannot be undone
+                                    </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button
                                         type="button"
                                         class="btn btn-default"
-                                        data-dismiss="modal"
-                                    >Close</button>
+                                        data-bs-dismiss="modal"
+                                    >Close
+                                    </button>
                                     <button
                                         type="submit"
                                         class="btn btn-primary"
-                                    >Confirm</button>
+                                    >Confirm
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -246,34 +265,38 @@
                                     t-att-value="ticket.id"
                                 />
                                 <div class="modal-header">
-                                    <button
-                                        type="button"
-                                        class="close"
-                                        data-dismiss="modal"
-                                        aria-label="Close"
-                                    >
-                                        <span aria-hidden="true">&amp;times;</span>
-                                    </button>
                                     <h4
                                         class="modal-title"
                                         id="myModalLabel"
-                                    >Upgrade / change ticket</h4>
+                                    >Upgrade / change ticket
+                                    </h4>
+                                    <button
+                                        type="button"
+                                        class="btn-close"
+                                        data-bs-dismiss="modal"
+                                        aria-label="Close"
+                                    >
+                                    </button>
                                 </div>
                                 <div class="modal-body">
                                     <p
                                     >This ticket can be changed to other tickets or products. Click <em
-                                        >continue</em>, register new ticket (or fill the cart by other tickets\products) and follow usual checkout process.</p>
+                                        >continue</em>, register new ticket (or fill the cart by other tickets\products) and
+                                        follow usual checkout process.
+                                    </p>
                                 </div>
                                 <div class="modal-footer">
                                     <button
                                         type="button"
                                         class="btn btn-default"
-                                        data-dismiss="modal"
-                                    >Close</button>
+                                        data-bs-dismiss="modal"
+                                    >Close
+                                    </button>
                                     <button
                                         type="submit"
                                         class="btn btn-primary"
-                                    >Continue</button>
+                                    >Continue
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -299,12 +322,14 @@
                             <li>
                                 <a
                                     href="?error=receiver_not_found"
-                                >there is no partner with that email</a>
+                                >there is no partner with that email
+                                </a>
                             </li>
                             <li>
                                 <a
                                     href="?error=receiver_has_ticket"
-                                >Partner already has ticket</a>
+                                >Partner already has ticket
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -343,11 +368,11 @@
     </template>
     <template id="message_origin_link">
         <p>This ticket has been canceled from:
-        <t t-foreach="origin" t-as="o">
+            <t t-foreach="origin" t-as="o">
                 <a href="#" t-att-data-oe-model="o._name" t-att-data-oe-id="o.id">
                     <t t-esc="o.name" />
                 </a>
-                <span t-if="origin.ids[-1:] != o.ids">, </span>
+                <span t-if="origin.ids[-1:] != o.ids">,</span>
             </t>
         </p>
     </template>

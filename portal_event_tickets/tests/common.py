@@ -29,34 +29,6 @@ class TourCase(HttpCase):
             {"event_id": self.event.id}
         )
 
-        self.event.write(
-            {
-                "attendee_field_ids": [
-                    (
-                        6,
-                        0,
-                        [
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_name"
-                            ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_email"
-                            ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_phone"
-                            ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_country_id"
-                            ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_function"
-                            ).id,
-                        ],
-                    )
-                ]
-            }
-        )
-
         # create Portal User
         self.user_portal1 = self.env.ref("portal_event_tickets.user_portal1")
 
@@ -79,7 +51,6 @@ class TourCase(HttpCase):
                 "note": "Invoice after delivery",
             }
         )
-        sale_order.onchange_partner_id()
 
         # In the sale order I add some sale order lines. i choose event product
         sale_order_line = self.env["sale.order.line"].create(

@@ -12,7 +12,6 @@
         "portal",
         "partner_event",
         "website_event_sale",
-        "website_event_attendee_fields",
         "website_sale_refund",
     ],
     "data": [
@@ -20,8 +19,15 @@
         "views/event_registration.xml",
         "views/event_event.xml",
         "data/mail_template_data.xml",
-        "views/assets.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "/portal_event_tickets/static/src/js/portal.esm.js",
+        ],
+        "web.assets_tests": [
+            "/portal_event_tickets/static/src/js/ticket_transfer.tour.esm.js",
+        ],
+    },
     "qweb": [],
     "demo": ["data/res_users_demo.xml"],
 }

@@ -6,7 +6,7 @@ from odoo.tests.common import HttpCase, tagged
 _logger = logging.getLogger(__name__)
 
 
-@tagged("at_install", "-post_install")
+@tagged("-at_install", "post_install")
 class TestBackend(HttpCase):
     def test_base(self):
         att_email = "att2@example.com"
@@ -23,14 +23,8 @@ class TestBackend(HttpCase):
 
         registration_count_before = test_env["event.registration"].search_count([])
 
-        self.browser_js(
-            "/event",
-            "odoo.__DEBUG__.services['web_tour.tour']"
-            ".run('website_event_attendee_fields_test_tour_base', 1000)",
-            "odoo.__DEBUG__.services['web_tour.tour']"
-            ".tours.website_event_attendee_fields_test_tour_base.ready",
-            login="demo",
-            timeout=200,
+        self.start_tour(
+            "event", "website_event_attendee_fields_test_tour_base", 1000, login="demo"
         )
         registration_count_after = test_env["event.registration"].search_count([])
 

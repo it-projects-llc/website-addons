@@ -23,15 +23,10 @@ Event guest Custom Field
 |badge1| |badge2| |badge3|
 
 By default ``website_event`` module asks only three fields to fill about
-attendees (name, email, phone). This module allows to customize any set
-of fields.
+attendees info: name, email, phone. This module allows to customize any
+set of fields.
 
 Also,
-
--  if total bootstrap width of field columns is more that 12
-
-   -  hides Header at Attendee form
-   -  shows field name above each input
 
 -  If user is authenticated:
 
@@ -66,8 +61,21 @@ Configuration
 =============
 
 -  Open menu ``Event``
+
 -  Select or create Event
--  At ``Website Fields`` tab update list of fields
+
+-  At ``Question`` tab add question:
+
+   -  Question type: Contact's field
+
+   -  Contact field: choose any
+
+   -  Contact field domain (if shown): input domain or leave default
+
+   -  Ask once per order:
+
+      -  To store value in attendee contact: leave unchecked
+      -  To store value in "booked by contact": set checked
 
 Usage
 =====

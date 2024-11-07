@@ -13,12 +13,18 @@
     "data": [
         "views/website_event_templates.xml",
         "views/event_event_views.xml",
-        "security/ir.model.access.csv",
-        "views/assets.xml",
+        "views/event_templates_page_registration.xml",
+        "views/ir_model_views.xml",
     ],
     "demo": [
-        "data/event_event_attendee_field_demo.xml",
         "data/event_event_demo.xml",
-        "views/assets_demo.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "website_event_attendee_fields/static/src/js/registration_form.js",
+        ],
+        "web.assets_tests": [
+            "website_event_attendee_fields/static/src/js/test_tour.js",
+        ],
+    },
 }

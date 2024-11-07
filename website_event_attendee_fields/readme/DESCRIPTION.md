@@ -1,11 +1,6 @@
-By default `website_event` module asks only three fields to fill about attendees (name, email, phone). This module allows to customize any set of fields.
+By default `website_event` module asks only three fields to fill about attendees info: name, email, phone. This module allows to customize any set of fields.
 
 Also,
-
-* if total bootstrap width of field columns is more that 12
-
-  - hides Header at Attendee form
-  - shows field name above each input
 
 * If user is authenticated:
 

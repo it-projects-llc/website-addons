@@ -26,7 +26,13 @@ class EventRegistration(models.Model):
         elif vals.get("attendee_partner_id"):
             partner_exists = self.env["res.partner"].browse(vals["attendee_partner_id"])
 
-        partner_vals = self._prepare_partner(vals)
+        event = self.env["event.event"].browse(vals["event_id"])
+        general_question_ids = event.general_question_ids.ids
+
+        partner_vals = self._prepare_partner_for_attendee_fields(vals)
+        booked_by_partner_vals = self._parse_answers_for_partner_questions(
+            vals, general_question_ids
+        )
 
         if partner_exists:
             vals["attendee_partner_id"] = partner_exists.id
@@ -34,6 +40,9 @@ class EventRegistration(models.Model):
             vals["attendee_partner_id"] = Partner.sudo().create(partner_vals).id
 
         res = super().create(vals)
+
+        if booked_by_partner_vals:
+            res.partner_id.write(booked_by_partner_vals)
 
         if res.attendee_partner_id:
             # be sure, that name and phone in registration are ones from Attendee,
@@ -81,44 +90,44 @@ class EventRegistration(models.Model):
 
         return res
 
-    def _prepare_partner(self, vals):
-        """method from partner_event module"""
-        event = self.env["event.event"].browse(vals["event_id"])
-        if not event.attendee_field_ids:
-            # attendee_field_ids is not configure
-            # May happen in tests of other modules, which don't suppose that this module is installed.  # noqa: E501
-            # Just return super values.
-            return super(EventRegistration, self)._prepare_partner(vals)
-
-        # copy partner fields to return and removes non-registration fields from vals
+    def _prepare_partner_for_attendee_fields(self, vals):
         res = {}
-        partner_fields = self.env["res.partner"]._fields
-        _logger.debug("registration vals before removing: %s", vals)
-        for field in event.attendee_field_ids:
-            fn = field.field_name
-            if field.field_model == "res.partner" or fn in partner_fields:
-                # partner fields
-                value = vals.get(field.field_name)
-                if value:
-                    # Don't pass empty value, because it removes previous value.
-                    # E.g. when partner with email is specified and known fields are not filled at the form  # noqa: E501
-                    res[fn] = value
+        for fname in ("name", "email", "phone"):
+            res[fname] = vals.get(fname, False)
 
-            if fn not in self._fields:
-                # non-registration fields
-                if fn in vals:
-                    del vals[fn]
+        event = self.env["event.event"].browse(vals["event_id"])
+        for q in event.partner_questions:
+            fname = q.partner_field_name
+            res[fname] = vals.pop(fname, False)
 
-        _logger.debug("registration vals after removing: %s", vals)
-        _logger.debug("partner values: %s", res)
-        return res
+        # Don't pass empty value, because it removes previous value.
+        # E.g. when partner with email is specified
+        # And known fields are not filled at the form
+        return {k: v for k, v in res.items() if v}
 
-    def _get_website_registration_allowed_fields(self):
-        res = super(EventRegistration, self)._get_website_registration_allowed_fields()
-        res.update(
-            self.env["event.event.attendee_field"]
-            .sudo()
-            .search([])
-            .mapped("field_name")
-        )
-        return res
+    @api.model
+    def _parse_answers_for_partner_questions(self, reg_vals, question_ids):
+        Question = self.env["event.question"]
+        partner_vals = {}
+
+        if not reg_vals.get("registration_answer_ids"):
+            return partner_vals
+
+        for tuple_answer in reg_vals["registration_answer_ids"]:
+            if tuple_answer[0] != 0:
+                continue
+
+            answer = tuple_answer[2]
+
+            qid = answer["question_id"]
+            if qid not in question_ids:
+                continue
+
+            q = Question.browse(qid)
+            if q.question_type != "partner_field":
+                continue
+
+            partner_field_name = q.partner_field_name
+            partner_vals[partner_field_name] = q._parse_partner_field_answer(answer)
+
+        return partner_vals

@@ -17,29 +17,45 @@ class TestCase(TransactionCase):
                 "date_end": fields.Datetime.to_string(
                     datetime.today() + timedelta(days=15)
                 ),
-            }
-        )
-        self.event.write(
-            {
-                "attendee_field_ids": [
+                "question_ids": [
                     (
-                        6,
                         0,
-                        [
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_name"
+                        0,
+                        {
+                            "title": "Name",
+                            "question_type": "name",
+                        },
+                    ),
+                    (
+                        0,
+                        0,
+                        {
+                            "title": "Email",
+                            "question_type": "email",
+                        },
+                    ),
+                    (
+                        0,
+                        0,
+                        {
+                            "title": "Country",
+                            "question_type": "partner_field",
+                            "partner_field": self.env.ref(
+                                "base.field_res_partner__country_id"
                             ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_email"
+                        },
+                    ),
+                    (
+                        0,
+                        0,
+                        {
+                            "title": "Function",
+                            "question_type": "partner_field",
+                            "partner_field": self.env.ref(
+                                "base.field_res_partner__function"
                             ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_phone"
-                            ).id,
-                            self.env.ref(
-                                "website_event_attendee_fields.attendee_field_country_id"
-                            ).id,
-                        ],
-                    )
-                ]
+                        },
+                    ),
+                ],
             }
         )

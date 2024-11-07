@@ -11,7 +11,7 @@ class TestCase(TransactionCase):
     post_install = True
 
     def setUp(self):
-        super(TestCase, self).setUp()
+        super().setUp()
         self.event = self.env["event.event"].create(
             {
                 "name": "TestEvent",

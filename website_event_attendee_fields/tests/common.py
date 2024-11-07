@@ -6,7 +6,7 @@ from odoo.tests.common import TransactionCase
 
 class TestCase(TransactionCase):
     def setUp(self):
-        super(TestCase, self).setUp()
+        super().setUp()
         self.event = self.env["event.event"].create(
             {
                 "name": "TestEvent",

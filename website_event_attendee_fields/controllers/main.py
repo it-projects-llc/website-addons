@@ -61,9 +61,7 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         registrations = self._process_attendees_form(event, post)
         emails = [r.get("email", "").strip() for r in registrations]
         assert len(emails) == len(set(emails))
-        res = super(WebsiteEventControllerExtended, self).registration_confirm(
-            event, **post
-        )
+        res = super().registration_confirm(event, **post)
         if res.location:
             # If super redirect (to /shop/checkout)
             url = (

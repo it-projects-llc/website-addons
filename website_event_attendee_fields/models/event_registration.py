@@ -33,7 +33,7 @@ class EventRegistration(models.Model):
         else:
             vals["attendee_partner_id"] = Partner.sudo().create(partner_vals).id
 
-        res = super(EventRegistration, self).create(vals)
+        res = super().create(vals)
 
         if res.attendee_partner_id:
             # be sure, that name and phone in registration are ones from Attendee,

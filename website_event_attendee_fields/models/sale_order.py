@@ -38,7 +38,7 @@ class SaleOrder(models.Model):
                     "quantity": order_line.product_uom_qty,
                 }
 
-        return super(SaleOrder, self)._cart_update(
+        return super()._cart_update(
             product_id=product_id,
             line_id=line_id,
             add_qty=add_qty,

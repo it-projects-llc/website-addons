@@ -3,7 +3,7 @@
     "summary": """Do you need more information about attendees than three default fields (name, email, phone)?""",  # noqa: E501
     "category": "Marketing",
     "images": ["images/banner.jpg"],
-    "version": "14.0.2.0.1",
+    "version": "17.0.1.0.0",
     "application": False,
     "author": "IT-Projects LLC",
     "support": "it@it-projects.info",
@@ -16,7 +16,6 @@
         "security/ir.model.access.csv",
         "views/assets.xml",
     ],
-    "qweb": [],
     "demo": [
         "data/event_event_attendee_field_demo.xml",
         "data/event_event_demo.xml",

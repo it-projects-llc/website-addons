@@ -9,19 +9,21 @@ _logger = logging.getLogger(__name__)
 
 
 class TestBackend(common.TestCase):
-    def test_field(self):
-        country_field = self.env.ref(
-            "website_event_attendee_fields.attendee_field_country_id"
+    def test_question_select_options(self):
+        country_question = self.env["event.question"].search(
+            [
+                ("question_type", "=", "partner_field"),
+                ("partner_field.name", "=", "country_id"),
+            ],
+            limit=1,
         )
-        # cover name_get()
-        _logger.info("name_get for country field: %s", country_field.display_name)
 
-        country_field.domain = "[('code', '=', 'RU')]"
+        country_question.partner_field_domain = "[('code', '=', 'RU')]"
 
-        self.assertEqual(1, len(country_field.get_select_options()))
+        self.assertEqual(1, len(country_question.get_select_options()))
 
-        country_field.domain = False
-        self.assertTrue(1 < len(country_field.get_select_options()))
+        country_question.partner_field_domain = False
+        self.assertTrue(1 < len(country_question.get_select_options()))
 
     def test_registration(self):
         country = self.env.ref("base.ru")
@@ -42,27 +44,24 @@ class TestBackend(common.TestCase):
         self.assertEqual(email_value, registration.attendee_partner_id.email)
         self.assertEqual(country.id, registration.attendee_partner_id.country_id.id)
 
-    def test_header(self):
-        self.assertFalse(self.event.use_attendees_header)
-        self.env.ref("website_event_attendee_fields.attendee_field_name").width = "3"
-        self.env.ref("website_event_attendee_fields.attendee_field_email").width = "3"
-        self.env.ref("website_event_attendee_fields.attendee_field_phone").width = "3"
-        self.env.ref(
-            "website_event_attendee_fields.attendee_field_country_id"
-        ).width = "3"
-        self.event._compute_use_attendees_header()
-        self.assertTrue(self.event.use_attendees_header)
-
     def test_emails_duplicates(self):
-        event = self.event.id
+        event = self.event
+        name_question = event.question_ids.filtered(lambda q: q.question_type == "name")
+        email_question = event.question_ids.filtered(
+            lambda q: q.question_type == "email"
+        )
+        country_question = event.question_ids.filtered(
+            lambda q: q.question_type == "partner_field"
+            and q.partner_field_name == "country_id"
+        )
         email = "email@example.com"
         post = {
-            "1-name": "dummy",
-            "1-email": email,
-            "1-country_id": 1,
-            "2-name": "dummy",
-            "2-email": email,
-            "2-country_id": 1,
+            f"1-name-{name_question.id}": "Name1",
+            f"1-email-{email_question.id}": email,
+            f"1-country_id-{country_question.id}": 1,
+            f"2-name-{name_question.id}": "Name2",
+            f"2-email-{email_question.id}": email,
+            f"2-country_id-{country_question.id}": 2,
         }
         with MockRequest(self.env), self.assertRaises(AssertionError):
             obj = WebsiteEventControllerExtended()

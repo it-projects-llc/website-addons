@@ -3,54 +3,8 @@ import re
 
 from odoo import http
 from odoo.http import request
-from odoo.models import BaseModel
 
-from odoo.addons.website_event.controllers.main import (
-    UserError,
-    WebsiteEventController,
-    _,
-    fields,
-)
-
-
-# fmt: off
-def _process_attendees_form(self, event, form_details):
-    """ Process data posted from the attendee details form.
-
-    :param form_details: posted data from frontend registration form, like
-        {'1-name': 'r', '1-email': 'r@r.com', '1-phone': '', '1-event_ticket_id': '1'}
-    """
-    allowed_fields = request.env['event.registration']._get_website_registration_allowed_fields()
-    registration_fields = {key: v for key, v in request.env['event.registration']._fields.items() if key in allowed_fields}
-    # change: added res.partner fields
-    registration_fields.update({key: v for key, v in request.env['res.partner']._fields.items() if key in allowed_fields})
-    for ticket_id in list(filter(lambda x: x is not None, [form_details[field] if 'event_ticket_id' in field else None for field in form_details.keys()])):
-        if int(ticket_id) not in event.event_ticket_ids.ids and len(event.event_ticket_ids.ids) > 0:
-            raise UserError(_("This ticket is not available for sale for this event"))
-    registrations = {}
-    global_values = {}
-    for key, value in form_details.items():
-        counter, attr_name = key.split('-', 1)
-        field_name = attr_name.split('-')[0]
-        if field_name not in registration_fields:
-            continue
-        elif isinstance(registration_fields[field_name], (fields.Many2one, fields.Integer)):
-            value = int(value) or False  # 0 is considered as a void many2one aka False
-        else:
-            value = value
-
-        if counter == '0':
-            global_values[attr_name] = value
-        else:
-            registrations.setdefault(counter, dict())[attr_name] = value
-    for key, value in global_values.items():
-        for registration in registrations.values():
-            registration[key] = value
-
-    return list(registrations.values())
-# fmt: on
-
-WebsiteEventController._process_attendees_form = _process_attendees_form
+from odoo.addons.website_event.controllers.main import WebsiteEventController
 
 
 class WebsiteEventControllerExtended(WebsiteEventController):
@@ -75,13 +29,22 @@ class WebsiteEventControllerExtended(WebsiteEventController):
             return res
 
     def _process_attendees_form(self, event, form_details):
-        """Remove spaces in emails"""
-        res = super(WebsiteEventControllerExtended, self)._process_attendees_form(
-            event, form_details
-        )
+        res = super()._process_attendees_form(event, form_details)
+
+        specific_question_ids = event.specific_question_ids.ids
+
         for registration in res:
             if registration.get("email"):
+                # Remove spaces in emails
                 registration["email"] = registration.get("email").strip()
+
+            partner_vals = request.env[
+                "event.registration"
+            ]._parse_answers_for_partner_questions(registration, specific_question_ids)
+
+            if partner_vals:
+                registration.update(partner_vals)
+
         return res
 
     @http.route(
@@ -92,6 +55,9 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         website=True,
     )
     def check_email(self, event_id, email):
+        if not email:
+            return {}
+
         partner = (
             request.env["res.partner"].sudo().search([("email", "=", email)], limit=1)
         )
@@ -129,17 +95,40 @@ class WebsiteEventControllerExtended(WebsiteEventController):
             return {"email_not_allowed": error_msg}
 
         known_fields = {}
-        for f in event.attendee_field_ids:
-            if f.field_name == "email":
-                continue
-            if getattr(partner, f.field_name):
-                if partner != request.env.user.partner_id:
-                    known_fields[f.field_name] = ""
-                else:
-                    value = partner[f.field_name]
-                    if isinstance(value, BaseModel):
-                        known_fields[f.field_name] = value.id or ""
-                    else:
-                        known_fields[f.field_name] = value
+        do_not_disable_fields = {}
 
-        return {"known_fields": known_fields}
+        for q in event.specific_question_ids:
+            if q.question_type == "email":
+                continue
+
+            fname = None
+            value = None
+            if q.question_type == "partner_field":
+                fname = q.partner_field_name
+                value = q.get_value(partner) or ""
+            elif q.question_type in ["name", "phone", "company_name"]:
+                fname = q.question_type
+                value = getattr(partner, fname) or ""
+
+            if fname and value:
+                if partner == request.env.user.partner_id:
+                    known_fields[fname] = value
+                else:
+                    known_fields[fname] = ""
+
+        # Special case for firstname and lastname fields
+        # If one of the is given and not the other,
+        # then we consider that we name is not fully known
+        # and we add mark not to disable them
+        if partner == request.env.user.partner_id:
+            firstname = known_fields.get("firstname")
+            lastname = known_fields.get("lastname")
+
+            if (lastname and not firstname) or (firstname and not lastname):
+                do_not_disable_fields["firstname"] = True
+                do_not_disable_fields["lastname"] = True
+
+        return {
+            "known_fields": known_fields,
+            "do_not_disable_fields": do_not_disable_fields,
+        }

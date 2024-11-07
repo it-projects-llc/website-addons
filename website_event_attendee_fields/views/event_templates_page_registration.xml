@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <template
+        id="registration_event_question"
+        inherit_id="website_event.registration_event_question"
+    >
+        <xpath expr="//t[@t-else='']" position="before">
+            <t
+                t-elif="question.question_type == 'partner_field' and question.partner_field_type == 'many2one'"
+            >
+                <t
+                    t-if="counter in (0, 1)"
+                    t-set="field_value"
+                    t-value="default_first_attendee.get(question.partner_field_name)"
+                />
+                <t t-else="" t-set="field_value" t-value="None" />
+                <select
+                    t-attf-name="#{registration_index}-#{question.partner_field_name}-#{question.id}"
+                    class="form-select"
+                    t-att-required="question.is_mandatory_answer"
+                    t-att-data="question.partner_field_name"
+                >
+                    <option value="" />
+                    <t t-foreach="question.get_select_options()" t-as="s">
+                        <option
+                            t-att-value="s['id']"
+                            t-att-selected="field_value == s['id'] and '1'"
+                        >
+                            <t t-esc="s['name']" />
+                        </option>
+                    </t>
+                </select>
+            </t>
+            <t t-elif="question.question_type == 'partner_field'">
+                <input
+                    class="form-control"
+                    t-att-type="'date' if question.partner_field_type == 'date' else 'text'"
+                    t-attf-name="#{registration_index}-#{question.partner_field_name}-#{question.id}"
+                    t-att-required="question.is_mandatory_answer"
+                    t-att-value="default_first_attendee.get(question.partner_field_type) if counter in (0,1) else ''"
+                />
+            </t>
+        </xpath>
+    </template>
+
+    <template
+        id="registration_complete"
+        inherit_id="website_event.registration_complete"
+    >
+        <xpath expr="//span[@t-if='attendee.phone']" position="after">
+            <t t-foreach="event.partner_questions" t-as="q">
+                <t
+                    t-set="field_value"
+                    t-value="q.get_value(attendee.attendee_partner_id.sudo(), human_readable=True)"
+                />
+                <span>
+                    <t t-if="field_value" t-esc="field_value" />
+                    <t t-else="">N/A</t>
+                </span>
+                <br />
+            </t>
+        </xpath>
+    </template>
+</odoo>

@@ -44,7 +44,7 @@ class EventMailScheduler(models.Model):
                 super(EventMailScheduler, rself)._compute_scheduled_date()
                 continue
 
-            if rself.event_id.state not in ["confirm", "done"]:
+            if not rself.event_id.is_done:
                 rself.scheduled_date = False
             else:
                 date, sign = rself.event_id.create_date, 1

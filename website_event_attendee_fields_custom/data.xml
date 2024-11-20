@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="partner_firstname.field_res_partner__firstname" model="ir.model.fields">
+        <field name="attendee_field" eval="True" />
+    </record>
+
+    <record id="partner_firstname.field_res_partner__lastname" model="ir.model.fields">
+        <field name="attendee_field" eval="True" />
+    </record>
+
+    <record
+        id="partner_contact_nationality.field_res_partner__nationality_id"
+        model="ir.model.fields"
+    >
+        <field name="attendee_field" eval="True" />
+    </record>
+
+    <record id="field_res_partner__passport" model="ir.model.fields">
+        <field name="attendee_field" eval="True" />
+    </record>
+
+    <record
+        id="partner_contact_birthdate.field_res_partner__birthdate_date"
+        model="ir.model.fields"
+    >
+        <field name="attendee_field" eval="True" />
+    </record>
+</odoo>

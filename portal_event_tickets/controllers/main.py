@@ -142,11 +142,12 @@ class PortalEvent(CustomerPortal):
         if not self._has_ticket_access(ticket):
             raise Forbidden()
 
-        registration_badge_template = (
-            report_template_for_portal.get_metadata()[0].get("xmlid")
-            if report_template_for_portal
-            else "event.action_report_event_registration_badge"
-        )
+        if report_template_for_portal:
+            registration_badge_template = report_template_for_portal.report_name
+        else:
+            # fmt: off
+            registration_badge_template = "event.event_registration_report_template_badge"  # noqa: E501
+            # fmt: on
 
         pdf = (
             request.env["ir.actions.report"]

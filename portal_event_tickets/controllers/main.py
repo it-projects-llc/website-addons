@@ -142,17 +142,16 @@ class PortalEvent(CustomerPortal):
         if not self._has_ticket_access(ticket):
             raise Forbidden()
 
-        registration_badge_template = (
-            report_template_for_portal.get_metadata()[0].get("xmlid")
-            if report_template_for_portal
-            else "event.report_event_registration_badge"
-        )
+        if report_template_for_portal:
+            registration_badge_template = report_template_for_portal
+        else:
+            registration_badge_template = request.env.ref(
+                "event.report_event_registration_badge"
+            )
 
-        pdf = (
-            request.env.ref(registration_badge_template)
-            .with_user(SUPERUSER_ID)
-            ._render_qweb_pdf([ticket.id])[0]
-        )
+        pdf = registration_badge_template.with_user(SUPERUSER_ID)._render_qweb_pdf(
+            [ticket.id]
+        )[0]
 
         pdfhttpheaders = [
             ("Content-Type", "application/pdf"),

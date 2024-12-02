@@ -8,6 +8,7 @@ parserOptions:
 
 overrides:
   - files:
+      - "website_event_attendee_fields/static/src/js/test_tour.js"
       - "**/*.esm.js"
     parserOptions:
       sourceType: module

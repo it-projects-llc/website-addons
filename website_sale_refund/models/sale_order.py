@@ -24,12 +24,15 @@ class SaleOrder(models.Model):
         )
         if order_line:
             return order_line
-        values = self._website_product_id_change(self.id, product_id, qty=1)
-        values["name"] = name
-        values["price_unit"] = -1 * refund_price
-        values["tax_id"] = False
-        values["refund_source_line_id"] = refund_source_line.id
-        order_line = SaleOrderLineSudo.create(values)
+        order_line = self._cart_update_order_line(product_id, 1, order_line)
+        order_line.write(
+            {
+                "name": name,
+                "price_unit": -1 * refund_price,
+                "tax_id": [(5,)],
+                "refund_source_line_id": refund_source_line.id,
+            }
+        )
         return order_line
 
     def _cart_update(

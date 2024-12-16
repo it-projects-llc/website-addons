@@ -133,7 +133,7 @@
                                     Transfer to another person
                                 </a>
                                 <a
-                                    t-if="ticket.event_id.ticket_transferring"
+                                    t-if="ticket._can_upgrade_ticket()"
                                     role="button"
                                     data-bs-toggle="modal"
                                     data-bs-target="#changeTicketModal"

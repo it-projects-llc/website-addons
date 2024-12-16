@@ -96,3 +96,6 @@ class EventRegistration(models.Model):
             lambda s: s.interval_type == "transferring_finished"
         )
         onsubscribe_schedulers.execute(self)  # self is a registration
+
+    def _can_upgrade_ticket(self):
+        return self.event_id.ticket_transferring and self.sale_order_line_id

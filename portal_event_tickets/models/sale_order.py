@@ -22,9 +22,9 @@ class SaleOrderLine(models.Model):
 
         for t in tickets:
             # post a message why it was canceled
-            t.message_post_with_view(
+            t.message_post_with_source(
                 "portal_event_tickets.message_origin_link",
-                values={"origin": origin},
+                render_values={"origin": origin},
                 subtype_id=self.env.ref("mail.mt_note").id,
             )
 

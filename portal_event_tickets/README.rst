@@ -64,11 +64,11 @@ At event form:
 
 -  Activate ``[x] Enable Ticket transferring``
 
--  At ``Email Schedule`` Tab add record:
+-  At ``Communication`` Tab add record:
 
-   -  **Email To Send**: *Event: Transferring started*
+   -  **Template**: *Event: Transferring started*
    -  **Unit**: *Immediately*
-   -  **When to Run**: *Transferring started*
+   -  **Trigger**: *Transferring started*
 
 Ticket changing configuration
 -----------------------------

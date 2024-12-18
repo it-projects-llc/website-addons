@@ -63,21 +63,10 @@ class EventMailScheduler(models.Model):
                 continue
 
             if registration:
-                rself.write(
-                    {
-                        "mail_registration_ids": [
-                            (0, 0, {"registration_id": registration.id})
-                        ]
-                    }
-                )
+                rself._create_missing_mail_registrations(registration)
+
             # execute scheduler on registrations
-            rself.mail_registration_ids.filtered(
-                lambda reg: reg.scheduled_date
-                and reg.scheduled_date
-                <= datetime.strftime(
-                    fields.datetime.now(), tools.DEFAULT_SERVER_DATETIME_FORMAT
-                )
-            ).execute()
+            rself.mail_registration_ids.execute()
         return True
 
 

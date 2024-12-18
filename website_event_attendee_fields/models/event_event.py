@@ -28,6 +28,10 @@ class Event(models.Model):
             .search(
                 [
                     ("event_id", "=", self.id),
+                    "|",
+                    ("attendee_partner_id", "=", partner_id),
+                    "&",
+                    ("attendee_partner_id", "=", False),
                     ("partner_id", "=", partner_id),
                     ("state", "=", "open"),
                 ]

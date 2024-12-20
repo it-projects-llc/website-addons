@@ -37,4 +37,27 @@ class Event(models.Model):
                 ]
             )
         )
+
+        SaleOrderLine = self.env["sale.order.line"].sudo()
+        if "refund_source_line_id" in SaleOrderLine._fields:
+            # special case, when using portal_event_tickets
+            # User starts upgrading ticket
+            # Ticket that is being upgraded must be excluded from search
+            # That ticket is marked as refund in cart
+
+            currently_refunding_order_lines = SaleOrderLine.search(
+                [
+                    (
+                        "refund_source_line_id",
+                        "in",
+                        registration.sale_order_line_id.ids,
+                    ),
+                    ("state", "in", ("draft",)),
+                ]
+            ).refund_source_line_id
+
+            registration = registration.filtered(
+                lambda x: x.sale_order_line_id not in currently_refunding_order_lines
+            )
+
         return registration

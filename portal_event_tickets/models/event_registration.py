@@ -12,12 +12,13 @@ class EventRegistration(models.Model):
     )
     was_transferred = fields.Boolean(
         "Ticket was transferred",
-        help="Ticket was transferred",
+        help="Checked if the ticket was transferred",
         default=False,
     )
     origin_registration = fields.Many2one(
         "event.registration",
         compute="_compute_origin_registration",
+        help="From which registration it was upgraded from",
         store=True,
         string="Original Ticket",
         tracking=True,

@@ -58,9 +58,14 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         if not email:
             return {}
 
-        partner = (
-            request.env["res.partner"].sudo().search([("email", "=", email)], limit=1)
-        )
+        Partners = request.env["res.partner"].sudo()
+
+        current_user = request.env.user
+        if email == current_user.email:
+            partner = current_user.partner_id
+        else:
+            partner = Partners.search([("email", "=", email)], limit=1)
+
         if not partner:
 
             def remove_spaces(s):
@@ -69,19 +74,15 @@ class WebsiteEventControllerExtended(WebsiteEventController):
                 return s
 
             email = remove_spaces(email)
-            partner = (
-                request.env["res.partner"]
-                .sudo()
-                .search(
-                    [
-                        "|",
-                        "|",
-                        ("email", "=ilike", "% " + email),
-                        ("email", "=ilike", "% " + email + " %"),
-                        ("email", "=ilike", email + " %"),
-                    ],
-                    limit=1,
-                )
+            partner = Partners.search(
+                [
+                    "|",
+                    "|",
+                    ("email", "=ilike", "% " + email),
+                    ("email", "=ilike", "% " + email + " %"),
+                    ("email", "=ilike", email + " %"),
+                ],
+                limit=1,
             )
             if not partner:
                 return {}
@@ -111,7 +112,7 @@ class WebsiteEventControllerExtended(WebsiteEventController):
                 value = getattr(partner, fname) or ""
 
             if fname and value:
-                if partner == request.env.user.partner_id:
+                if partner == current_user.partner_id:
                     known_fields[fname] = value
                 else:
                     known_fields[fname] = ""

@@ -3,7 +3,7 @@
     "summary": """Allows to customers see their tickets for events at the Portal""",
     "category": "Marketing",
     "images": ["images/banner.jpg"],
-    "version": "17.0.1.0.1",
+    "version": "17.0.1.0.2",
     "author": "IT-Projects LLC",
     "support": "apps@it-projects.info",
     "website": "https://github.com/it-projects-llc/website-addons",
@@ -15,6 +15,8 @@
         "website_sale_refund",
     ],
     "data": [
+        "security/ir.model.access.csv",
+        "security/event_security.xml",
         "views/portal_templates.xml",
         "views/event_registration.xml",
         "views/event_event.xml",

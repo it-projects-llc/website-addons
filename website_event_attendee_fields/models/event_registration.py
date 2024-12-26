@@ -1,6 +1,7 @@
 import logging
 
 from odoo import _, api, models
+from odoo.tools.mail import email_normalize
 
 _logger = logging.getLogger(__name__)
 
@@ -99,6 +100,9 @@ class EventRegistration(models.Model):
         for q in event.partner_questions:
             fname = q.partner_field_name
             res[fname] = vals.pop(fname, False)
+
+        if res.get("email"):
+            res["email"] = email_normalize(res["email"])
 
         # Don't pass empty value, because it removes previous value.
         # E.g. when partner with email is specified

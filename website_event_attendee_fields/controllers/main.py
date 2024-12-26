@@ -94,6 +94,9 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         website=True,
     )
     def check_email(self, event_id, email):
+        if not email:
+            return {}
+
         partner = (
             request.env["res.partner"].sudo().search([("email", "=", email)], limit=1)
         )

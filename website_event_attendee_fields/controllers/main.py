@@ -1,8 +1,9 @@
 # ruff: noqa: E501
 import re
 
-from odoo import http
+from odoo import _, http
 from odoo.http import request
+from odoo.tools.mail import email_normalize
 
 from odoo.addons.website_event.controllers.main import WebsiteEventController
 
@@ -59,6 +60,10 @@ class WebsiteEventControllerExtended(WebsiteEventController):
             return {}
 
         Partners = request.env["res.partner"].sudo()
+        email = email_normalize(email, True)
+
+        if not email:
+            return {"email_not_allowed": _("Invalid email")}
 
         current_user = request.env.user
         if email == current_user.email:

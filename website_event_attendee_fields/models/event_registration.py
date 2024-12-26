@@ -1,6 +1,7 @@
 import logging
 
 from odoo import _, api, models
+from odoo.tools.mail import email_normalize
 
 _logger = logging.getLogger(__name__)
 
@@ -108,6 +109,9 @@ class EventRegistration(models.Model):
                 # non-registration fields
                 if fn in vals:
                     del vals[fn]
+
+        if res.get("email"):
+            res["email"] = email_normalize(res["email"])
 
         _logger.debug("registration vals after removing: %s", vals)
         _logger.debug("partner values: %s", res)

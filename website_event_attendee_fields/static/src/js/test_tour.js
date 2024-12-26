@@ -44,7 +44,7 @@ odoo.define("website_event_attendee_fields.test_tour", function (require) {
 
                     $("input[name='2-name']").val("Att2");
                     $("input[name='2-phone']").val("222 222");
-                    $("input[name='2-email']").val("att2@example.com");
+                    $("input[name='2-email']").val("Att2@example.com");
                     $("select[name='2-country_id']").val("1");
                     $("input[name='2-function']").val("JOB2");
                 },

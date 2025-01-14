@@ -16,18 +16,7 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         registrations = self._process_attendees_form(event, post)
         emails = [r.get("email", "").strip() for r in registrations]
         assert len(emails) == len(set(emails))
-        res = super().registration_confirm(event, **post)
-        if res.location:
-            # If super redirect (to /shop/checkout)
-            url = (
-                event.sudo()
-                .env["ir.config_parameter"]
-                .get_param("website_event_sale.redirection")
-                or res.location
-            )
-            return request.redirect(url)
-        else:
-            return res
+        return super().registration_confirm(event, **post)
 
     def _process_attendees_form(self, event, form_details):
         res = super()._process_attendees_form(event, form_details)

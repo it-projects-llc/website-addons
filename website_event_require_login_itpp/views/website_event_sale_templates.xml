@@ -5,13 +5,8 @@
         inherit_id="website_event.registration_template"
         priority="100"
     >
-        <!-- due to odoo framework restrictions we cannot add attribute depending on condition.
-         Workaround: add attribute and remove it by JS when page is loaded -->
         <xpath expr="//div" position="before">
-            <t
-                t-set="is_user_public"
-                t-value="website.env.user == request.website.user_id"
-            />
+            <t t-set="is_user_public" t-value="request.env.user._is_public()" />
         </xpath>
         <xpath expr="//button[@type='button']" position="replace">
             <t t-if="is_user_public">

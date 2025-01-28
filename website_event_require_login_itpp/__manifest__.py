@@ -3,7 +3,7 @@
     "summary": """User registration at your portal is always a plus for marketing""",
     "category": "Marketing",
     "images": ["images/banner.jpg"],
-    "version": "17.0.1.0.1",
+    "version": "17.0.1.0.2",
     "application": False,
     "author": "IT-Projects LLC",
     "support": "apps@it-projects.info",

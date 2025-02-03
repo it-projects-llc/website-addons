@@ -56,3 +56,11 @@ class TestBackend(HttpCase):
             att_function,
             "Latest registration doesn't have correct partner's Job",
         )
+
+    def test_duplicate_email(self):
+        self.start_tour(
+            "event",
+            "website_event_attendee_fields_test_tour_duplicate_email",
+            1000,
+            login="demo",
+        )

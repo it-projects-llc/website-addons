@@ -72,3 +72,72 @@ registry
             },
         ],
     });
+
+registry
+    .category("web_tour.tours")
+    .add("website_event_attendee_fields_test_tour_duplicate_email", {
+        test: true,
+        url: "/event",
+        steps: () => [
+            {
+                content: "Go to the `Events` page",
+                trigger: 'a[href*="/event"]:contains("Hockey Tournament"):first',
+            },
+            {
+                content: "Click on Register modal tickets button",
+                trigger: 'button:contains("Register")',
+                run: "click",
+            },
+            {
+                content: "Select 2 'Free' tickets to buy",
+                trigger: "div.modal-body select.form-select",
+                run: "text 2",
+            },
+            {
+                content: "Click on `Register` button",
+                extra_trigger: "select:eq(0):has(option:contains(2):propSelected)",
+                trigger: '.btn-primary:contains("Register")',
+            },
+            {
+                // To ensure, that other fields are editable
+                content: "Empty email input field",
+                trigger: "input[name^='1-email']",
+                run: function () {
+                    $("input[name^='1-email']").val("").trigger("change");
+                },
+            },
+            {
+                content: "Fill attendees details",
+                extra_trigger: "input[name^='1-function']",
+                trigger: "input[name^='1-name']",
+                run: function () {
+                    if ($("input[name^='2-email']").val()) {
+                        console.log("error", "Only first attendee can be autofilled");
+                    }
+                    $("input[name^='1-name']").val("Att1");
+                    $("input[name^='1-phone']").val("111 111");
+                    $("input[name^='1-email']")
+                        .val("att1@example.com")
+                        .trigger("change");
+
+                    $("input[name^='2-name']").val("Att2");
+                    $("input[name^='2-phone']").val("222 222");
+                    $("input[name^='2-email']")
+                        .val("att1@example.com")
+                        .trigger("change");
+                },
+            },
+            {
+                content: "Make sure button is disabled",
+                trigger: "input[name^='1-email']",
+                run: function () {
+                    const $btn = $('button:contains("Confirm")');
+                    if (!$btn) {
+                        console.error("Confirm button not found");
+                    } else if (!$btn.is(":disabled")) {
+                        console.error("Confirm button is not disabled");
+                    }
+                },
+            },
+        ],
+    });

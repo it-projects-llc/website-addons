@@ -57,11 +57,9 @@ odoo.define("website_event_attendee_fields.registration_form", [], function (req
         return row;
     }
 
-    function api_check_email(event_id, $row) {
-        // Check form
-        var row = get_row($row);
+    function duplicate_email_check(row) {
         var email = row.get_email();
-        var has_duplicate = Object.values(rows).some((r) => {
+        return Object.values(rows).some((r) => {
             if (r.counter === row.counter) {
                 // Don't compare with itself
                 return false;
@@ -76,6 +74,14 @@ odoo.define("website_event_attendee_fields.registration_form", [], function (req
 
             return true;
         });
+    }
+
+    function api_check_email(event_id, $row) {
+        // Check form
+        var row = get_row($row);
+        var email = row.get_email();
+
+        var has_duplicate = duplicate_email_check(row);
 
         if (!email) {
             row.reset();
@@ -109,7 +115,7 @@ odoo.define("website_event_attendee_fields.registration_form", [], function (req
                         row.disable_known_field(value, field);
                     }
                 }
-            } else {
+            } else if (!duplicate_email_check(row)) {
                 row.reset();
             }
         });

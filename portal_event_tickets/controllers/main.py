@@ -1,11 +1,13 @@
+import json
 import logging
 
 from werkzeug.exceptions import Forbidden, NotFound
 
 from odoo import SUPERUSER_ID, _, http
 from odoo.exceptions import AccessError
-from odoo.http import request
+from odoo.http import content_disposition, request
 
+from odoo.addons.event.controllers.main import EventController
 from odoo.addons.http_routing.models.ir_http import slug
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.addons.website_event.controllers.main import WebsiteEventController
@@ -350,3 +352,42 @@ class WebsiteSaleExtended(WebsiteSale):
                 }
             )
         return response
+
+
+class EventControllerExtended(EventController):
+    @http.route()
+    def event_my_tickets(self, event_id, registration_ids, tickets_hash):
+        super().event_my_tickets(event_id, registration_ids, tickets_hash)
+
+        event = request.env["event.event"].browse(event_id)
+        event_sudo = event.exists().sudo()
+        event_registrations_sudo = event_sudo.registration_ids.filtered(
+            lambda reg: reg.id in json.loads(registration_ids or "[]")
+        )
+
+        if event.report_template_for_portal:
+            xml_id = event_sudo.report_template_for_portal.get_metadata()[0].get(
+                "xmlid"
+            )
+        if not xml_id:
+            xml_id = "event.action_report_event_registration_badge"
+
+        pdf = (
+            request.env["ir.actions.report"]
+            .sudo()
+            ._render_qweb_pdf(
+                xml_id,
+                event_registrations_sudo.ids,
+            )[0]
+        )
+        pdfhttpheaders = [
+            ("Content-Type", "application/pdf"),
+            ("Content-Length", len(pdf)),
+            (
+                "Content-Disposition",
+                content_disposition(
+                    f"Tickets-{event_sudo.name} ({event_sudo.date_begin_located}).pdf"
+                ),
+            ),
+        ]
+        return request.make_response(pdf, headers=pdfhttpheaders)

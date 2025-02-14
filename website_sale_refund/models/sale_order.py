@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class SaleOrder(models.Model):
@@ -89,6 +89,11 @@ class SaleOrderLine(models.Model):
         "Refund Source Line",
         help="Order line that is used for refund",
     )
+
+    @api.depends("refund_source_line_id")
+    def _compute_price_unit(self):
+        refund_lines = self.filtered("refund_source_line_id")
+        return super(SaleOrderLine, self - refund_lines)._compute_price_unit()
 
     def _cancel_line(self, origin=None):
         # Origin - sale order, that cancels this line

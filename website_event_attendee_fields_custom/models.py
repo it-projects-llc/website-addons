@@ -1,6 +1,10 @@
 from odoo import fields, models
 
 
+class Deprecated(models.Model):
+    _name = "event.event.attendee_field"
+
+
 class Partner(models.Model):
     _inherit = "res.partner"
 

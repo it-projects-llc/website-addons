@@ -19,3 +19,5 @@ Additional features:
 * Tickets can be changed to other products (including other tickets)
 
   - When old ticket is canceled, a message with a reference to new Sale Order is posted
+
+* Allow to download the attendee badge template instead of built-in one for **Download Ticket** option at `/payment/confirmation` page

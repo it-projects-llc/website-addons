@@ -1,6 +1,3 @@
-# ruff: noqa: E501
-import re
-
 from odoo import _, http
 from odoo.http import request
 from odoo.tools.mail import email_normalize
@@ -55,39 +52,19 @@ class WebsiteEventControllerExtended(WebsiteEventController):
             return {"email_not_allowed": _("Invalid email")}
 
         current_user = request.env.user
-        if email == current_user.email:
-            partner = current_user.partner_id
-        else:
-            partner = Partners.search([("email", "=", email)], limit=1)
-
+        partner = Partners.search([("email_normalized", "=", email)])
         if not partner:
-
-            def remove_spaces(s):
-                s = re.sub(r"^\s*", "", s)
-                s = re.sub(r"\s*$", "", s)
-                return s
-
-            email = remove_spaces(email)
-            partner = Partners.search(
-                [
-                    "|",
-                    "|",
-                    ("email", "=ilike", "% " + email),
-                    ("email", "=ilike", "% " + email + " %"),
-                    ("email", "=ilike", email + " %"),
-                ],
-                limit=1,
-            )
-            if not partner:
-                return {}
-            partner_email = remove_spaces(partner.email)
-            # It's a workaround in order to prevent duplicating partner accounts when buying a ticket
-            partner.write({"email": partner_email})
+            return {}
 
         event = request.env["event.event"].sudo().browse(event_id)
-        error_msg = event.check_partner_for_new_ticket(partner.id)
+        error_msg = event.check_partner_for_new_ticket(partner.ids)
         if error_msg:
             return {"email_not_allowed": error_msg}
+
+        if current_user.partner_id in partner:
+            partner = current_user.partner_id
+        else:
+            partner = partner.sorted("id", reverse=True)[0]
 
         known_fields = {}
         do_not_disable_fields = {}

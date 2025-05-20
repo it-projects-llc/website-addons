@@ -15,12 +15,12 @@ class Event(models.Model):
                 lambda q: q.question_type == "partner_field"
             )
 
-    def check_partner_for_new_ticket(self, partner_id):
-        if self.partner_is_participating(partner_id):
+    def check_partner_for_new_ticket(self, partner_ids):
+        if self.partners_are_participating(partner_ids):
             return _("This email address is already signed up for the event")
         return None
 
-    def partner_is_participating(self, partner_id):
+    def partners_are_participating(self, partner_ids):
         self.ensure_one()
         registration = (
             self.env["event.registration"]
@@ -29,10 +29,10 @@ class Event(models.Model):
                 [
                     ("event_id", "=", self.id),
                     "|",
-                    ("attendee_partner_id", "=", partner_id),
+                    ("attendee_partner_id", "in", partner_ids),
                     "&",
                     ("attendee_partner_id", "=", False),
-                    ("partner_id", "=", partner_id),
+                    ("partner_id", "in", partner_ids),
                     ("state", "=", "open"),
                 ]
             )

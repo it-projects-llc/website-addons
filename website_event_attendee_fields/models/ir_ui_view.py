@@ -11,11 +11,16 @@ class IrUiView(models.Model):
 
             are_tickets_different = len(set(map(lambda x: x["id"], tickets))) > 1
             user = self.env.user
+            partners = (
+                self.sudo()
+                .env["res.partner"]
+                .search([("email_normalized", "=", user.email_normalized)])
+            )
 
             if (
                 are_tickets_different
                 or user._is_public()
-                or event.partner_is_participating(user.partner_id.id)
+                or event.partners_are_participating(partners.ids)
             ):
                 values["default_first_attendee"] = {}
 

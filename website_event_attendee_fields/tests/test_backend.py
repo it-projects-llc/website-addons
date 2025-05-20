@@ -66,3 +66,61 @@ class TestBackend(common.TestCase):
         with MockRequest(self.env), self.assertRaises(AssertionError):
             obj = WebsiteEventControllerExtended()
             obj.registration_confirm(event, **post)
+
+    def test_check_email_01(self):
+        event = self.env["event.event"].create(
+            {
+                "name": "Test Default Event",
+            }
+        )
+
+        with MockRequest(self.env):
+            obj = WebsiteEventControllerExtended()
+            res = obj.check_email(event.id, "attendee01@example.com")
+            self.assertNotIn("email_not_allowed", res)
+
+        self.env["event.registration"].create(
+            {
+                "name": "Attendee Name",
+                "email": "attendee01@example.com",
+                "event_id": event.id,
+            }
+        )
+
+        with MockRequest(self.env):
+            obj = WebsiteEventControllerExtended()
+            res = obj.check_email(event.id, "attendee01@example.com")
+            self.assertIn("email_not_allowed", res)
+
+    def test_check_email_02(self):
+        slavik_email = "slavik@slavik.ru"
+        slavik1, slavik2 = self.env["res.partner"].create(
+            [
+                {"name": "Slavik 01", "email": slavik_email},
+                {"name": "Slavik 02", "email": slavik_email},
+            ]
+        )
+
+        event = self.env["event.event"].create(
+            {
+                "name": "Test Default Event",
+            }
+        )
+
+        with MockRequest(self.env):
+            obj = WebsiteEventControllerExtended()
+            res = obj.check_email(event.id, slavik_email)
+            self.assertNotIn("email_not_allowed", res)
+
+        self.env["event.registration"].create(
+            {
+                "name": "Attendee Name",
+                "attendee_partner_id": slavik2.id,
+                "event_id": event.id,
+            }
+        )
+
+        with MockRequest(self.env):
+            obj = WebsiteEventControllerExtended()
+            res = obj.check_email(event.id, slavik_email)
+            self.assertIn("email_not_allowed", res)

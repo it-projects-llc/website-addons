@@ -50,5 +50,16 @@ class TestTicketUpgrade(TestWebsiteEventSaleCommon, HttpCaseWithUserPortal):
         self.assertEqual(len(reg), 1, "Unexpected behavior")
 
         self.start_tour(
-            "/my/tickets", "portal_event_tickets.ticket_upgrade_tour", login="portal"
+            "/my/tickets",
+            "portal_event_tickets.ticket_upgrade_tour",
+            login="portal",
+            step_delay=500,
         )
+
+        q = self.env["sale.order"].search([], order="id DESC", limit=1)
+        q.action_confirm()
+
+        new_reg = q.order_line.registration_ids
+        self.assertEqual(len(new_reg), 1, "Unexpected behavior")
+        self.assertEqual(reg.state, "cancel")
+        self.assertEqual(new_reg.state, "open")

@@ -27,7 +27,7 @@
             "/portal_event_tickets/static/src/js/portal.esm.js",
         ],
         "web.assets_tests": [
-            "/portal_event_tickets/static/src/js/ticket_transfer.tour.esm.js",
+            "/portal_event_tickets/static/src/js/*.tour.esm.js",
         ],
     },
     "qweb": [],

@@ -12,7 +12,7 @@ publicWidget.registry.TransferTicketWidget = publicWidget.Widget.extend({
         const $modal = $("#modal_attendees_registration");
 
         /* Show form inline */
-        $modal.find("form").attr("action", "/my/tickets/transfer/receive");
+        $modal.find("form").attr("action", "/my/registrations/transfer/receive");
         $modal.removeClass("modal fade");
 
         /* Remove Cancel button; update title */

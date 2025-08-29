@@ -15,5 +15,7 @@ class TicketPDF(TourCase):
         login = self.user_portal1.login
         self.authenticate(login, login)
 
-        r = self.url_open(f"/my/tickets/pdf/{self.ticket1.id}", allow_redirects=False)
+        r = self.url_open(
+            f"/my/registrations/pdf/{self.ticket1.id}", allow_redirects=False
+        )
         self.assertEqual(r.status_code, 200)

@@ -4,7 +4,7 @@ import {registry} from "@web/core/registry";
 
 registry.category("web_tour.tours").add("ticket_transfer_receive", {
     test: true,
-    url: "/my/tickets/transfer/receive",
+    url: "/my/registrations/transfer/receive",
     steps: () => [
         {
             content: "Fill attendees details",
@@ -20,7 +20,7 @@ registry.category("web_tour.tours").add("ticket_transfer_receive", {
             trigger: 'button:contains("Confirm")',
         },
         {
-            content: "We are redirected to /my/tickets page",
+            content: "We are redirected to /my/registrations page",
             trigger: ".breadcrumb-item:contains(Tickets)",
             run: function () {
                 // It's needed to don't make a click on the link

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="event_question_view_form" model="ir.ui.view">
+        <field name="name">event.question.view.form.attendee.fields</field>
+        <field name="model">event.question</field>
+        <field name="inherit_id" ref="website_event.event_question_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='question_type']" position="after">
+                <field
+                    name="partner_field"
+                    invisible="question_type != 'partner_field'"
+                    required="question_type == 'partner_field'"
+                    options="{'no_create': 1}"
+                />
+                <field name="partner_field_type" invisible="1" />
+                <field
+                    name="partner_field_domain"
+                    invisible="question_type != 'partner_field' or partner_field_type != 'many2one'"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

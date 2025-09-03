@@ -13,6 +13,7 @@
     "data": [
         "views/website_event_templates.xml",
         "views/event_event_views.xml",
+        "views/event_question_views.xml",
         "views/event_templates_page_registration.xml",
         "views/ir_model_views.xml",
     ],

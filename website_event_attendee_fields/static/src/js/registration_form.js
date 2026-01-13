@@ -105,7 +105,7 @@ odoo.define("website_event_attendee_fields.registration_form", [], function (req
                 var msg = _t(
                     "This email address already has an account. Data will be taken from this account"
                 );
-                row.show_msg(msg);
+                row.show_msg(msg, "blue");
 
                 var do_not_disable_fields = data.do_not_disable_fields || {};
                 for (const [field, value] of Object.entries(data.known_fields)) {

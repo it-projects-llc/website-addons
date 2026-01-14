@@ -11,8 +11,11 @@ class WebsiteEventControllerExtended(WebsiteEventController):
         """Check that threre are no email duplicates.
         There is a check on frontend, but that is easy to get around."""
         registrations = self._process_attendees_form(event, post)
-        emails = [r.get("email", "").strip() for r in registrations]
-        assert len(emails) == len(set(emails))
+        emails_tickets = [
+            (r.get("email", "").strip(), r.get("event_ticket_id"))
+            for r in registrations
+        ]
+        assert len(emails_tickets) == len(set(emails_tickets))
         return super().registration_confirm(event, **post)
 
     def _process_attendees_form(self, event, form_details):

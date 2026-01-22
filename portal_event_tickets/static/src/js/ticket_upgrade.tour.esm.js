@@ -5,7 +5,7 @@ import wsTourUtils from "@website_sale/js/tours/tour_utils";
 
 registry.category("web_tour.tours").add("portal_event_tickets.ticket_upgrade_tour", {
     test: true,
-    url: "/my/tickets",
+    url: "/my/registrations",
     steps: () => [
         {
             content: "Choose first ticket",

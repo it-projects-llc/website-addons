@@ -44,7 +44,7 @@ class PortalEvent(CustomerPortal):
         return response
 
     @http.route(
-        ["/my/tickets", "/my/tickets/page/<int:page>"],
+        ["/my/registrations", "/my/registrations/page/<int:page>"],
         type="http",
         auth="user",
         website=True,
@@ -64,7 +64,7 @@ class PortalEvent(CustomerPortal):
         ticket_count = Registration.search_count(domain)
         # make pager
         pager = request.website.pager(
-            url="/my/tickets",
+            url="/my/registrations",
             url_args={"date_begin": date_begin, "date_end": date_end},
             total=ticket_count,
             page=page,
@@ -80,7 +80,7 @@ class PortalEvent(CustomerPortal):
                 "page_name": "tickets",
                 "tickets": tickets,
                 "pager": pager,
-                "default_url": "/my/tickets",
+                "default_url": "/my/registrations",
             }
         )
         return request.render("portal_event_tickets.portal_my_tickets", values)
@@ -120,7 +120,9 @@ class PortalEvent(CustomerPortal):
 
         return env.user.has_group("event.group_event_manager")
 
-    @http.route(["/my/tickets/<int:ticket>"], type="http", auth="user", website=True)
+    @http.route(
+        ["/my/registrations/<int:ticket>"], type="http", auth="user", website=True
+    )
     def ticket_page(self, ticket=None, **kw):
         values = self._prepare_portal_layout_values()
         ticket = request.env["event.registration"].browse(ticket)
@@ -135,7 +137,10 @@ class PortalEvent(CustomerPortal):
         return request.render("portal_event_tickets.portal_ticket_page", values)
 
     @http.route(
-        ["/my/tickets/pdf/<int:ticket_id>"], type="http", auth="user", website=True
+        ["/my/registrations/pdf/<int:ticket_id>"],
+        type="http",
+        auth="user",
+        website=True,
     )
     def portal_get_ticket(self, ticket_id=None, **kw):
         ticket = request.env["event.registration"].browse(ticket_id)
@@ -165,7 +170,7 @@ class PortalEvent(CustomerPortal):
         return request.make_response(pdf, headers=pdfhttpheaders)
 
     @http.route(
-        ["/my/tickets/transfer"],
+        ["/my/registrations/transfer"],
         type="http",
         auth="user",
         methods=["GET"],
@@ -181,7 +186,7 @@ class PortalEvent(CustomerPortal):
         return request.render("portal_event_tickets.portal_ticket_transfer", values)
 
     @http.route(
-        ["/my/tickets/transfer"],
+        ["/my/registrations/transfer"],
         type="http",
         auth="user",
         methods=["POST"],
@@ -238,7 +243,7 @@ class PortalEvent(CustomerPortal):
         return error
 
     @http.route(
-        ["/my/tickets/transfer/receive"],
+        ["/my/registrations/transfer/receive"],
         type="http",
         auth="user",
         methods=["GET", "POST"],
@@ -312,10 +317,14 @@ class PortalEvent(CustomerPortal):
         receiver.sudo().write(partner_vals)
 
         ticket.sudo().transferring_finished()
-        return request.redirect("/my/tickets")
+        return request.redirect("/my/registrations")
 
     @http.route(
-        ["/my/tickets/change"], type="http", auth="user", methods=["POST"], website=True
+        ["/my/registrations/change"],
+        type="http",
+        auth="user",
+        methods=["POST"],
+        website=True,
     )
     def ticket_change(self, ticket_id, **kw):
         ticket = request.env["event.registration"].browse(int(ticket_id))

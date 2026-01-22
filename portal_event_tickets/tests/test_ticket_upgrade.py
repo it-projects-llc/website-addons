@@ -50,7 +50,7 @@ class TestTicketUpgrade(TestWebsiteEventSaleCommon, HttpCaseWithUserPortal):
         self.assertEqual(len(reg), 1, "Unexpected behavior")
 
         self.start_tour(
-            "/my/tickets",
+            "/my/registrations",
             "portal_event_tickets.ticket_upgrade_tour",
             login="portal",
             step_delay=500,

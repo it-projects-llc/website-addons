@@ -24,7 +24,7 @@
                 <t t-if="ticket">
                     <a
                         t-if="ticket"
-                        t-attf-href="/my/tickets?{{ keep_query() }}"
+                        t-attf-href="/my/registrations?{{ keep_query() }}"
                     >Tickets
                     </a>
                     / Ticket #
@@ -45,7 +45,7 @@
         <xpath expr="//div[@id='portal_client_category']" position="inside">
             <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Tickets</t>
-                <t t-set="url" t-value="'/my/tickets'" />
+                <t t-set="url" t-value="'/my/registrations'" />
                 <t t-set="text">View your tickets</t>
                 <t
                     t-set="icon"
@@ -75,13 +75,15 @@
                         <td>
                             <a
                                 class="ticket-id"
-                                t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}"
+                                t-attf-href="/my/registrations/#{ticket.id}?#{keep_query()}"
                             >#
                                 <t t-esc="ticket.id" />
                             </a>
                         </td>
                         <td>
-                            <a t-attf-href="/my/tickets/#{ticket.id}?#{keep_query()}">
+                            <a
+                                t-attf-href="/my/registrations/#{ticket.id}?#{keep_query()}"
+                            >
                                 <t t-esc="ticket.event_id.display_name" />
                             </a>
                         </td>
@@ -144,7 +146,7 @@
                                     Upgrade / Change ticket
                                 </a>
                                 <a
-                                    t-attf-href="/my/tickets/pdf/#{ticket.id}"
+                                    t-attf-href="/my/registrations/pdf/#{ticket.id}"
                                     class="btn btn-secondary d-block btn-block mb8"
                                 >
                                     <i class="fa fa-print" />
@@ -184,7 +186,10 @@
                 >
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form t-attf-action="/my/tickets/transfer" method="post">
+                            <form
+                                t-attf-action="/my/registrations/transfer"
+                                method="post"
+                            >
                                 <input
                                     type="hidden"
                                     name="csrf_token"
@@ -253,7 +258,10 @@
                 >
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
-                            <form t-attf-action="/my/tickets/change" method="post">
+                            <form
+                                t-attf-action="/my/registrations/change"
+                                method="post"
+                            >
                                 <input
                                     type="hidden"
                                     name="csrf_token"
